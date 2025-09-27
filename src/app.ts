@@ -12,6 +12,7 @@ import txRoutes from "./routes/tx";
 import adminRoutes from "./routes/adminRoutes";
 import { authRequired } from "./middleware/auth";
 import trc20Router from "./routes/trc20";
+import uiRoutes from "./routes/ui";
 
 const app = express();
 
@@ -46,7 +47,7 @@ app.use("/api/tx", txRoutes);
 app.use("/api/market", marketRoutes);
 app.use("/api/admin", authRequired, adminRoutes);
 app.use("/api/trc20", trc20Router);
-
+app.use("/api", uiRoutes); 
 // 404 + error handlers
 app.use(notFound);
 app.use(errorHandler);
