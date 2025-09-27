@@ -23,10 +23,7 @@ const asNum = (name: string, fallback: number) => {
 
 const asList = (name: string, fallbackCSV: string) => {
   const csv = process.env[name] ?? fallbackCSV;
-  return csv
-    .split(",")
-    .map((s) => s.trim())
-    .filter(Boolean);
+  return csv.split(",").map(s => s.trim()).filter(Boolean);
 };
 
 export const config = {
@@ -36,14 +33,20 @@ export const config = {
   // If you’re behind nginx/proxy in prod, set TRUST_PROXY=1
   trustProxy: asBool("TRUST_PROXY", false),
 
-  // Comma-separated list, e.g.
-  // CORS_ORIGINS=http://localhost:8080,http://127.0.0.1:8080,https://your-frontend.vercel.app
+  // e.g. CORS_ORIGINS=https://app.example.com,https://staging.example.com,http://localhost:8080
   corsOrigins: asList("CORS_ORIGINS", "http://localhost:8080,http://127.0.0.1:8080"),
 
   tron: {
+    // Primary base URL
     host: required("TRON_HOST", "https://api.trongrid.io"),
-    apiKey: process.env.TRONGRID_API_KEY ?? "",
+    // Optional override for TronGrid base (falls back to host)
+    gridHost: process.env.TRON_GRID_HOST || process.env.TRONGRID_GRID_HOST || process.env.TRON_HOST,
+    // Accept either env var name
+    apiKey: process.env.TRONGRID_API_KEY || process.env.TRON_API_KEY || "",
     senderPrivateKey: process.env.SENDER_PRIVATE_KEY,
     feeLimitSun: asNum("FEE_LIMIT_SUN", 10_000_000),
   },
-};
+} as const;
+
+// (Optional) export a type if you want stronger typing across the app:
+// export type AppConfig = typeof config;
